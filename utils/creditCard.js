@@ -1,9 +1,9 @@
 const axios = require('./axios');
 
 const cheerio = require('cheerio');
+const creditCard = require('credit-card');
 const faker = require('faker');
 
-const creditCard = require('credit-card');
 
 const generators = {
     MASTERCARD: 'https://generator.creditcard/mastercard.php',
@@ -25,28 +25,30 @@ const selectors = {
 * */
 
 exports.generateCreditCard = async (type) => {
-    const api = generators[type];
+    try {
+        const api = generators[type];
+        const responseBody = await axios.response(api);
+        const $ = cheerio.load(responseBody);
 
-    const responseBody = await axios.response(api);
-    const $ = cheerio.load(responseBody);
+        const cc = $(selectors.cc).val();
+        let valid = $(selectors.valid).val();
+        valid = `${valid.split('/')[0]}/20${valid.split('/')[1]}`;
+        const cvv = $(selectors.cvv).val();
 
+        const name = (`${faker.name.firstName()} ${faker.name.firstName()}`).toUpperCase();
+        const funds = faker.random.number();
 
-    const cc = $(selectors.cc).val();
-    let valid = $(selectors.valid).val();
-    valid = `${valid.split('/')[0]}/20${valid.split('/')[1]}`;
-    const cvv = $(selectors.cvv).val();
-
-    const name = (`${faker.name.firstName()} ${faker.name.firstName()}`).toUpperCase();
-    const funds =   faker.random.number();
-
-    return {
-        cardType: type,
-        number: cc,
-        expirationMonth: valid.split('/')[0],
-        expirationYear: valid.split('/')[1],
-        cvv: cvv,
-        cardFunds: funds,
-        name: name
+        return {
+            cardType: type,
+            number: cc,
+            expirationMonth: valid.split('/')[0],
+            expirationYear: valid.split('/')[1],
+            cvv: cvv,
+            cardFunds: funds,
+            name: name
+        }
+    } catch (e) {
+        throw new Error(e);
     }
 };
 

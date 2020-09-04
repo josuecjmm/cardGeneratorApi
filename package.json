@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js --encrypted=true",
+    "serve": "nodemon server.js --encrypted=true",
     "start:notEncrypted": "nodemon server.js --encrypted=false"
   },
   "keywords": [],
@@ -18,14 +18,10 @@
     "credit-card": "^3.0.2",
     "crypto-js": "^4.0.0",
     "dotenv": "^8.2.0",
-    "ejs": "^3.1.3",
     "express": "^4.17.1",
-    "express-validator": "^6.6.0",
+    "express-validator": "^6.6.1",
     "faker": "^4.1.0",
-    "google-translate": "^3.0.0",
-    "mysql2": "^2.1.0",
-    "translate": "^1.1.2",
-    "yargs": "^15.3.1"
+    "mysql2": "^2.1.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

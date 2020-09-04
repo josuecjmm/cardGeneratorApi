@@ -23,3 +23,15 @@ exports.CODE5 = {
     result: 'Fondos Insuficientes'
 };
 
+exports.CODE6 = field =>  {
+    return {
+        code: 6,
+        result: `${field} is required`
+    }
+}
+
+exports.CODE7 = {
+    code: 7,
+    result: 'Internal Server Error'
+};
+
