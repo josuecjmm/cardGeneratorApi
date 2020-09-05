@@ -1,4 +1,7 @@
+const Card = require('../models/card.model');
+
 const creditCard = require('../utils/creditCard');
+const db = require('../utils/database');
 const RESPONSES = require('../constants/responses');
 const validation = require('../utils/validations');
 
@@ -21,11 +24,34 @@ exports.postCreditCard = async (req, res, next) => {
 
         const card = await creditCard.generateCreditCard(type);
 
-        res.status(200).json(
-            card
-        )
+        if (card) {
+
+            const {
+                cardType, number, expirationMonth,
+                expirationYear, cvv, cardFunds, name
+            } = card;
+
+            let newCard = new Card(
+                cardType, number, expirationMonth.toString(),
+                expirationYear.toString(), cvv.toString(),
+                cardFunds.toString(), name
+            )
+
+            await newCard.save();
+
+            newCard.id = await db.getLastInsertId();
+
+            return res.status(200).json(
+                newCard
+            )
+        } else {
+            return res.status(400).json(
+                RESPONSES.CODE2
+            )
+        }
+
     } catch (e) {
-        res.status(400).json(RESPONSES.CODE2);
+        res.status(500).json(RESPONSES.CODE7);
     }
 
 };
