@@ -39,7 +39,8 @@ exports.postCreditCard = async (req, res, next) => {
 
             await newCard.save();
 
-            newCard.id = await db.getLastInsertId();
+            const id = await db.getLastInsertId();
+            newCard = {id, ...newCard};
 
             return res.status(200).json(
                 newCard
@@ -55,3 +56,24 @@ exports.postCreditCard = async (req, res, next) => {
     }
 
 };
+
+exports.getAllCreditCard = async (req, res, next) => {
+    try {
+        let cards = await Card.fetchAll();
+        cards = JSON.parse(cards).map(card => {
+            return {
+                id: card.id,
+                cardType: card.card_type,
+                cardNumber: parseInt(card.card_number),
+                expirationMonth: parseInt(card.expiration_month),
+                expirationYear: parseInt(card.expiration_year),
+                cvv: parseInt(card.cvv),
+                cardFunds: parseInt(card.card_funds),
+                name: card.name
+            }
+        })
+        return res.status(200).send(cards);
+    } catch (e) {
+        res.status(500).json(RESPONSES.CODE7);
+    }
+}

@@ -23,4 +23,8 @@ module.exports = class Card {
             ])
     }
 
+    static fetchAll() {
+        return db.select(query.selectAll())
+    }
+
 }
