@@ -26,3 +26,10 @@ FROM Card
 WHERE id = ?
 ;`
 }
+
+exports.delete = () => {
+    return `DELETE
+FROM Card 
+WHERE id = ?
+;`
+}

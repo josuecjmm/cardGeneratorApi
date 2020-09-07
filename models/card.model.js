@@ -31,4 +31,8 @@ module.exports = class Card {
         return db.select(query.selectSingle(), [id])
     }
 
+    static delete(id) {
+        return db.insertUpdate(query.delete(), [id]);
+    }
+
 }
