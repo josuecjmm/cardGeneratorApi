@@ -35,3 +35,10 @@ exports.CODE7 = {
     result: 'Internal Server Error'
 };
 
+exports.CODE8 = (item) => {
+    return {
+        code: 8,
+        result: `${item} not found`
+    }
+}
+

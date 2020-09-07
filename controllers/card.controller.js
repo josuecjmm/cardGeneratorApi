@@ -57,22 +57,43 @@ exports.postCreditCard = async (req, res, next) => {
 
 };
 
+const parseCreditCards = (cards) => {
+    return cards.map(card => {
+        return {
+            id: card.id,
+            cardType: card.card_type,
+            cardNumber: parseInt(card.card_number),
+            expirationMonth: parseInt(card.expiration_month),
+            expirationYear: parseInt(card.expiration_year),
+            cvv: parseInt(card.cvv),
+            cardFunds: parseInt(card.card_funds),
+            name: card.name
+        }
+    })
+}
+
 exports.getAllCreditCard = async (req, res, next) => {
     try {
         let cards = await Card.fetchAll();
-        cards = JSON.parse(cards).map(card => {
-            return {
-                id: card.id,
-                cardType: card.card_type,
-                cardNumber: parseInt(card.card_number),
-                expirationMonth: parseInt(card.expiration_month),
-                expirationYear: parseInt(card.expiration_year),
-                cvv: parseInt(card.cvv),
-                cardFunds: parseInt(card.card_funds),
-                name: card.name
-            }
-        })
+        cards = JSON.parse(cards);
+        cards = parseCreditCards(cards);
         return res.status(200).send(cards);
+    } catch (e) {
+        res.status(500).json(RESPONSES.CODE7);
+    }
+}
+
+exports.getSingleCreditCard = async (req, res, next) => {
+    try {
+        const {cardId} = req.params;
+        let card = await Card.fetchSingle(cardId);
+        card = JSON.parse(card);
+        if (card.length === 0) {
+            res.status(404).json(RESPONSES.CODE8('Card'));
+        } else {
+            card = parseCreditCards(card);
+            res.status(200).json(card[0]);
+        }
     } catch (e) {
         res.status(500).json(RESPONSES.CODE7);
     }

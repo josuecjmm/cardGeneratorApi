@@ -27,4 +27,8 @@ module.exports = class Card {
         return db.select(query.selectAll())
     }
 
+    static fetchSingle(id) {
+        return db.select(query.selectSingle(), [id])
+    }
+
 }
