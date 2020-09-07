@@ -23,7 +23,7 @@ exports.CODE5 = {
     result: 'Fondos Insuficientes'
 };
 
-exports.CODE6 = field =>  {
+exports.CODE6 = field => {
     return {
         code: 6,
         result: `${field} is required`
@@ -41,4 +41,10 @@ exports.CODE8 = (item) => {
         result: `${item} not found`
     }
 }
+
+exports.CODE9 = {
+    code: 9,
+    result: `Successfully deleted Card`
+}
+
 

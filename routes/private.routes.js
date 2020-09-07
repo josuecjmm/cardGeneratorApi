@@ -8,5 +8,6 @@ router.post('/pay', validation.pay, cardController.postTransaction);
 router.post('/card', cardController.postCreditCard);
 router.get('/cards', cardController.getAllCreditCard);
 router.get('/card/:cardId', cardController.getSingleCreditCard);
+router.delete('/card/:cardId', cardController.deleteCard);
 
 module.exports = {routes: router};
