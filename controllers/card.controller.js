@@ -95,6 +95,26 @@ exports.getSingleCreditCard = async (req, res, next) => {
     }
 }
 
+exports.updateCard = async (req, res, next) => {
+    try {
+        const errors = validation.errors(req);
+        if (errors.length > 0) {
+            return res.status(400).json(errors.map(error => JSON.parse(error)))
+        } else {
+            const {cardId} = req.params;
+            const {cardFunds} = req.body;
+
+            await Card.updateFunds(cardFunds.toString(), parseInt(cardId))
+
+            let card = await Card.fetchSingle(cardId);
+            card = JSON.parse(card)[0];
+            return res.status(200).json(card);
+        }
+    } catch (e) {
+        res.status(500).json(RESPONSES.CODE7);
+    }
+}
+
 exports.deleteCard = async (req, res, next) => {
     try {
         const {cardId} = req.params;
