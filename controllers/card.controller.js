@@ -72,7 +72,7 @@ const parseCreditCards = (cards) => {
     })
 }
 
-exports.getAllCreditCard = async (req, res, next) => {
+exports.getAllCards = async (req, res, next) => {
     try {
         let cards = await Card.fetchAll();
         cards = JSON.parse(cards);
@@ -88,12 +88,8 @@ exports.getSingleCreditCard = async (req, res, next) => {
         const {cardId} = req.params;
         let card = await Card.fetchSingle(cardId);
         card = JSON.parse(card);
-        if (card.length === 0) {
-            res.status(404).json(RESPONSES.CODE8('Card'));
-        } else {
-            card = parseCreditCards(card);
-            res.status(200).json(card[0]);
-        }
+        card = parseCreditCards(card);
+        return res.status(200).json(card[0]);
     } catch (e) {
         res.status(500).json(RESPONSES.CODE7);
     }
@@ -102,14 +98,8 @@ exports.getSingleCreditCard = async (req, res, next) => {
 exports.deleteCard = async (req, res, next) => {
     try {
         const {cardId} = req.params;
-        let card = await Card.fetchSingle(cardId);
-        card = JSON.parse(card);
-        if (card.length === 0) {
-            res.status(404).json(RESPONSES.CODE8('Card'));
-        } else {
-            await Card.delete(parseInt(cardId));
-            res.status(200).json(RESPONSES.CODE9)
-        }
+        await Card.delete(parseInt(cardId));
+        return res.status(200).json(RESPONSES.CODE9)
     } catch (e) {
         res.status(500).json(RESPONSES.CODE7);
     }
