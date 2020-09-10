@@ -9,6 +9,10 @@ router.post('/pay', validation.pay, cardController.postTransaction);
 router.post('/card', cardController.postCreditCard);
 router.get('/cards', cardController.getAllCards);
 router.get('/card/:cardId', cardMiddleware.checkCardExists, cardController.getSingleCreditCard);
+router.put('/card/:cardId',
+    cardMiddleware.checkCardExists, validation.updateFunds,
+    cardController.updateCard
+);
 router.delete('/card/:cardId', cardMiddleware.checkCardExists, cardController.deleteCard);
 
 module.exports = {routes: router};

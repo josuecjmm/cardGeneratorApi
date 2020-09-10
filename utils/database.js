@@ -30,7 +30,7 @@ exports.select = async (query, values) => {
 exports.insertUpdate = async (query, values) => {
     try {
         values = values.map(value => {
-            return isNaN(value) ? crypto.encrypt(value) : value;
+            return typeof value === "string" ? crypto.encrypt(value) : value;
         });
         await poolPromise.execute(query, values)
     } catch (e) {

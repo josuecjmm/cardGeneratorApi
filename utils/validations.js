@@ -52,6 +52,18 @@ exports.pay = [
     })
 ];
 
+exports.updateFunds = [
+    body('cardFunds').notEmpty().isNumeric()
+        .withMessage(JSON.stringify(responses.CODE6('cardFunds'))),
+
+    body('cardFunds').custom((value) => {
+        if (value < 0) {
+            throw new Error(JSON.stringify(responses.CODE5))
+        }
+        return true;
+    }),
+];
+
 exports.errors = (req) => {
     const errors = validationResult(req);
     const parsedErrorMessage = errors.errors.map(error => {

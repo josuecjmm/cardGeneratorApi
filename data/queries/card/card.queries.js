@@ -27,6 +27,13 @@ WHERE id = ?
 ;`
 }
 
+exports.updateFunds = () => {
+    return `UPDATE Card 
+SET card_funds = ?
+WHERE id = ?
+;`
+}
+
 exports.delete = () => {
     return `DELETE
 FROM Card 
