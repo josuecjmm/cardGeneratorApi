@@ -13,21 +13,10 @@ exports.pay = [
         .withMessage(JSON.stringify(responses.CODE6('expirationYear'))),
     body('cvv').notEmpty()
         .withMessage(JSON.stringify(responses.CODE6('cvv'))),
-    body('cardFunds').notEmpty()
-        .withMessage(JSON.stringify(responses.CODE6('cardFunds'))),
     body('name').notEmpty()
         .withMessage(JSON.stringify(responses.CODE6('name'))),
     body('total').notEmpty()
         .withMessage(JSON.stringify(responses.CODE6('total'))),
-
-
-    body('cardFunds').custom((value, {req}) => {
-        const leftFunds = value - req.body.total;
-        if (leftFunds < 0) {
-            throw new Error(JSON.stringify(responses.CODE5))
-        }
-        return true;
-    }),
 
     body('number').custom((value, {req}) => {
         const {
