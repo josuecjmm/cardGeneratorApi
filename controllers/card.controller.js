@@ -11,12 +11,28 @@ exports.postTransaction = async (req, res, next) => {
         if (errors.length > 0) {
             return res.status(400).json(errors.map(error => JSON.parse(error)))
         } else {
-            return res.status(200).json(RESPONSES.CODE1)
+            const {number, total} = req.body;
+            let card = await Card.fetchAll();
+            card = JSON.parse(card).filter(c => c.card_number === number);
+
+            if (!card) {
+                return res.status(404).json(RESPONSES.CODE8('Card'));
+            } else {
+                const {id, card_funds} = card[0];
+
+                const leftFunds = parseInt(card_funds) - total;
+                if (leftFunds < 0) {
+                   return res.status(400).json(RESPONSES.CODE5)
+                } else {
+                    await Card.updateFunds(leftFunds.toString(), parseInt(id))
+                    return res.status(200).json(RESPONSES.CODE1)
+                }
+            }
         }
     } catch (e) {
         res.status(500).json(RESPONSES.CODE7);
     }
-};
+    };
 
 exports.postCreditCard = async (req, res, next) => {
     try {
@@ -62,12 +78,12 @@ const parseCreditCards = (cards) => {
         return {
             id: card.id,
             cardType: card.card_type,
-            cardNumber: parseInt(card.card_number),
-            expirationMonth: parseInt(card.expiration_month),
-            expirationYear: parseInt(card.expiration_year),
-            cvv: parseInt(card.cvv),
-            cardFunds: parseInt(card.card_funds),
-            name: card.name
+            number: card.card_number,
+            expirationMonth: card.expiration_month,
+            expirationYear: card.expiration_year,
+            cvv: card.cvv,
+            name: card.name,
+            cardFunds: parseInt(card.card_funds)
         }
     })
 }
@@ -107,8 +123,8 @@ exports.updateCard = async (req, res, next) => {
             await Card.updateFunds(cardFunds.toString(), parseInt(cardId))
 
             let card = await Card.fetchSingle(cardId);
-            card = JSON.parse(card)[0];
-            return res.status(200).json(card);
+            card = parseCreditCards(JSON.parse(card));
+            return res.status(200).json(card[0]);
         }
     } catch (e) {
         res.status(500).json(RESPONSES.CODE7);
