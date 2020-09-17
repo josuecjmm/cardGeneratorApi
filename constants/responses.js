@@ -1,26 +1,26 @@
 exports.CODE1 = {
     code: 1,
-    result: 'Transaccion exitosa'
+    result: 'Successful Transaction'
 };
 
 exports.CODE2 = {
     code: 2,
-    result: 'Tarjeta Invalida'
+    result: 'Invalid Card'
 };
 
 exports.CODE3 = {
     code: 3,
-    result: 'Tarjeta Expirada'
+    result: 'Expired Card'
 };
 
 exports.CODE4 = {
     code: 4,
-    result: 'Tarjeta No Soportada'
+    result: 'Unsupported Card'
 };
 
 exports.CODE5 = {
     code: 5,
-    result: 'Fondos Insuficientes'
+    result: 'Not enough funds'
 };
 
 exports.CODE6 = field => {

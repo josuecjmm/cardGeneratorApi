@@ -2,17 +2,16 @@ const express = require('express');
 const router = express.Router();
 
 const cardController = require('../controllers/card.controller');
-const cardMiddleware = require('../middleware/card.middleware');
-const validation = require('../utils/validations')
+const validation = require('../middleware/cardValidations')
+const errors = require('../middleware/validationErrors')
 
-router.post('/pay', validation.pay, cardController.postTransaction);
+router.post('/pay', validation.pay, errors.validateErrors, cardController.postTransaction);
 router.post('/card', cardController.postCreditCard);
 router.get('/cards', cardController.getAllCards);
-router.get('/card/:cardId', cardMiddleware.checkCardExists, cardController.getSingleCreditCard);
-router.put('/card/:cardId',
-    cardMiddleware.checkCardExists, validation.updateFunds,
-    cardController.updateCard
+router.get('/card/:cardId', validation.checkCardExists, cardController.getSingleCreditCard);
+router.put('/card/:cardId', validation.checkCardExists, validation.updateFunds,
+    errors.validateErrors, cardController.updateCard
 );
-router.delete('/card/:cardId', cardMiddleware.checkCardExists, cardController.deleteCard);
+router.delete('/card/:cardId', validation.checkCardExists, cardController.deleteCard);
 
 module.exports = {routes: router};
