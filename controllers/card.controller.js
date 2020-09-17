@@ -3,36 +3,46 @@ const Card = require('../models/card.model');
 const creditCard = require('../utils/creditCard');
 const db = require('../utils/database');
 const RESPONSES = require('../constants/responses');
-const validation = require('../utils/validations');
 
 exports.postTransaction = async (req, res, next) => {
     try {
-        const errors = validation.errors(req);
-        if (errors.length > 0) {
-            return res.status(400).json(errors.map(error => JSON.parse(error)))
+        const {number, total} = req.body;
+        let card = await Card.fetchAll();
+        card = JSON.parse(card).filter(c => c.card_number === number);
+
+        if (!card) {
+            return res.status(404).json(RESPONSES.CODE8('Card'));
         } else {
-            const {number, total} = req.body;
-            let card = await Card.fetchAll();
-            card = JSON.parse(card).filter(c => c.card_number === number);
+            const {id, card_funds} = card[0];
 
-            if (!card) {
-                return res.status(404).json(RESPONSES.CODE8('Card'));
+            const leftFunds = parseInt(card_funds) - total;
+            if (leftFunds < 0) {
+                return res.status(400).json(RESPONSES.CODE5)
             } else {
-                const {id, card_funds} = card[0];
-
-                const leftFunds = parseInt(card_funds) - total;
-                if (leftFunds < 0) {
-                   return res.status(400).json(RESPONSES.CODE5)
-                } else {
-                    await Card.updateFunds(leftFunds.toString(), parseInt(id))
-                    return res.status(200).json(RESPONSES.CODE1)
-                }
+                await Card.updateFunds(leftFunds.toString(), parseInt(id))
+                return res.status(200).json(RESPONSES.CODE1)
             }
         }
+
     } catch (e) {
         res.status(500).json(RESPONSES.CODE7);
     }
-    };
+};
+
+const parseCreditCards = (cards) => {
+    return cards.map(card => {
+        return {
+            id: card.id,
+            cardType: card.card_type,
+            number: card.card_number,
+            expirationMonth: card.expiration_month,
+            expirationYear: card.expiration_year,
+            cvv: card.cvv,
+            name: card.name,
+            cardFunds: parseInt(card.card_funds)
+        }
+    })
+}
 
 exports.postCreditCard = async (req, res, next) => {
     try {
@@ -54,9 +64,11 @@ exports.postCreditCard = async (req, res, next) => {
             )
 
             await newCard.save();
+            newCard.cardFunds = parseInt(newCard.cardFunds)
 
             const id = await db.getLastInsertId();
             newCard = {id, ...newCard};
+
 
             return res.status(200).json(
                 newCard
@@ -72,21 +84,6 @@ exports.postCreditCard = async (req, res, next) => {
     }
 
 };
-
-const parseCreditCards = (cards) => {
-    return cards.map(card => {
-        return {
-            id: card.id,
-            cardType: card.card_type,
-            number: card.card_number,
-            expirationMonth: card.expiration_month,
-            expirationYear: card.expiration_year,
-            cvv: card.cvv,
-            name: card.name,
-            cardFunds: parseInt(card.card_funds)
-        }
-    })
-}
 
 exports.getAllCards = async (req, res, next) => {
     try {
@@ -113,19 +110,15 @@ exports.getSingleCreditCard = async (req, res, next) => {
 
 exports.updateCard = async (req, res, next) => {
     try {
-        const errors = validation.errors(req);
-        if (errors.length > 0) {
-            return res.status(400).json(errors.map(error => JSON.parse(error)))
-        } else {
-            const {cardId} = req.params;
-            const {cardFunds} = req.body;
+        const {cardId} = req.params;
+        const {cardFunds} = req.body;
 
-            await Card.updateFunds(cardFunds.toString(), parseInt(cardId))
+        await Card.updateFunds(cardFunds.toString(), parseInt(cardId))
 
-            let card = await Card.fetchSingle(cardId);
-            card = parseCreditCards(JSON.parse(card));
-            return res.status(200).json(card[0]);
-        }
+        let card = await Card.fetchSingle(cardId);
+        card = parseCreditCards(JSON.parse(card));
+        return res.status(200).json(card[0]);
+
     } catch (e) {
         res.status(500).json(RESPONSES.CODE7);
     }

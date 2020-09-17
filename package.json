@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "nodemon server.js --encrypted=true",
-    "start:notEncrypted": "nodemon server.js --encrypted=false"
+    "serve": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -22,8 +20,5 @@
     "express-validator": "^6.6.1",
     "faker": "^4.1.0",
     "mysql2": "^2.1.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.4"
   }
 }
