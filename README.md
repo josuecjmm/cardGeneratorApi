@@ -5,6 +5,7 @@ This is an express api project made to generate fake credit cards, save them on 
   - Great for testing purposes 
   - Easy to see if the payment of an app works, without using real cards
   - Right now is using mysql database; but can be changed to any other
+  - All the data inserted in the database is encrypted/decrypted to see on the API
 
 ### Installation
 
